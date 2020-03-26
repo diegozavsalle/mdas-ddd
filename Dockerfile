@@ -7,25 +7,11 @@ COPY composer.lock composer.json /var/www/
 WORKDIR /var/www
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
     unzip \
-    libicu-dev \
-    libbz2-dev \
-    locales \
     zip \
-    jpegoptim optipng pngquant gifsicle \
-    procps \
-    vim \
-    unzip \
     git \
     curl \
-    dirmngr \
-    apt-transport-https \
-    lsb-release \
-    ca-certificates
+    apt-transport-https
 
 RUN apt-get -y install \
     gcc \
@@ -35,11 +21,6 @@ RUN apt-get -y install \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-
-# Install extensions
-RUN docker-php-ext-install mbstring zip exif pcntl intl iconv bcmath calendar sockets \
-    && docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
-    && docker-php-ext-install gd
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
