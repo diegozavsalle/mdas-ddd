@@ -58,3 +58,5 @@ RUN useradd -u ${USER_ID} -ms /bin/bash -g ${USER_NAME} ${USER_GROUP}
 
 # Copy existing application directory permissions
 COPY --chown=${USER_NAME}:${USER_GROUP} . /var/www
+
+USER www

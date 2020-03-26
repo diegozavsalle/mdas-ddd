@@ -1,0 +1,65 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use PokePHP\PokeApi;
+
+
+//    Dado el nombre de un pokemon vía argumento, devuelve sus tipos. Ejemplo:
+//    • Input: bulbasaur
+//    • Output: poison, grass
+
+class GetPokemonTypesCommand extends Command
+{
+
+    protected function configure()
+    {
+        $this->setName("pokemon:types")
+            ->setDescription("Get Pokemon Types for a given pokemon")
+            ->addArgument('pokemon_name', InputArgument::REQUIRED, 'What is the name of your pokemon?');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $pokemonName = $input->getArgument('pokemon_name');
+        $api = new PokeApi();
+
+        $rs = $api->pokemon($pokemonName);
+        $rs = json_decode($rs);
+
+        if (!isset($rs->types)) {
+            $output->writeln("<comment>Pokemon: $pokemonName</comment>");
+            $output->writeln("<error>Not Found</error>");
+            return 0;
+        }
+
+        $types = implode(', ', array_map(function ($type) {
+            return $type->type->name;
+        }, $rs->types));
+
+        $output->writeln("<comment>Pokemon: $pokemonName</comment>");
+        $output->writeln("<info>Types: $types</info>");
+
+        return 1;
+    }
+
+}
+
+//Application Execution
+
+$app = new Application();
+$app->add(new \GetPokemonTypesCommand());
+try {
+    $app->run();
+} catch (Exception $e) {
+
+}
+
+
