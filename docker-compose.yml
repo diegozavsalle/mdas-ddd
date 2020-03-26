@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: '.'
+      args:
+        - USER_ID=1000
+    image: diegozav/mdas-ddd:1.0
+    container_name: app
+    restart: unless-stopped
+    tty: true
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    networks:
+      - app-network
+
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
